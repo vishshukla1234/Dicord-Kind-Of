@@ -2,13 +2,17 @@ import { useState, useRef, useEffect } from "react";
 import { MdSend, MdAttachFile } from "react-icons/md";
 import useChatContext from "../context/ChatContext";
 import { useNavigate } from "react-router";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import { baseUrl } from "/src/config/AxiosHelper";
+import toast from "react-hot-toast";
 
 const ChatPage = () => {
 
     const { roomId, currentUser, connected } = useChatContext();
-    console.log(roomId);
-    console.log(currentUser);
-    console.log(connected);
+    // console.log(roomId);
+    // console.log(currentUser);
+    // console.log(connected);
 
     const navigate = useNavigate()
     useEffect(() => {
@@ -48,6 +52,55 @@ const ChatPage = () => {
     const inputRef = useRef(null);
     const chatBox = useRef(null);
     const [stompClient, setStomClient] = useState(null);
+
+    //page init:
+    //load messages
+    //initialize stompclient
+    //subscribe
+    useEffect(() => {
+
+        const connectWebSocket = () => {
+            //SockJS
+            const sock = new SockJS(`${baseUrl}/chat`);
+            const client = Stomp.over(sock);
+
+            toast.success("Connected!");
+
+            client.connect({}, () => {
+                setStomClient(client);
+                client.subscribe(`topic/room/${roomId}`, (message) => {
+                    console.log(message);
+                    const newMessage = JSON.parse(message.body);
+                    setMessages((prev) => [...prev, newMessage]);
+                });
+            });
+        };
+
+        if (connected) {
+            connectWebSocket();
+        }
+
+    }, [roomId])
+
+    //send messages handle
+
+    const sendMessage = async () => {
+        if (stompClient && connected && input.trim()) {
+            console.log(input);
+
+            const message = {
+                sender: currentUser,
+                content: input,
+                roomId: roomId,
+            };
+
+            stompClient.send(
+                `/app/sendMessage/${roomId}`,
+                {},
+                JSON.stringify(message));
+            setInput("");
+        }
+    }
 
     return (
         <div className="">
@@ -92,13 +145,17 @@ const ChatPage = () => {
             {/* footer/message container */}
             < div className="fixed bottom-2 w-full h-15" >
                 <div className="h-full gap-4 flex items-center justify-between rounded-lg w-200 mx-auto dark:bg-gray-900">
-                    <input type="text" placeholder="Type your message" className="h-full w-full focus:border rounded-lg outline-none px-3 py-2" />
+                    <input calue={input}
+                        onChange={(e) => {
+                            setInput(e.target.value)
+                        }}
+                        type="text" placeholder="Type your message" className="h-full w-full focus:border rounded-lg outline-none px-3 py-2" />
 
                     <div className="flex gap-4">
                         <button className="dark:bg-purple-500 py-4 w-14 rounded-full cursor-pointer hover:dark:bg-purple-800 flex justify-center items-center">
                             <MdAttachFile />
                         </button>
-                        <button className="dark:bg-green-600 py-4 w-14 rounded-full cursor-pointer hover:dark:bg-green-800 flex justify-center items-center">
+                        <button onClick={sendMessage} className="dark:bg-green-600 py-4 w-14 rounded-full cursor-pointer hover:dark:bg-green-800 flex justify-center items-center">
                             <MdSend />
                         </button>
                     </div>
