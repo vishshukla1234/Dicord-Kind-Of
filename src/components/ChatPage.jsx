@@ -6,7 +6,8 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { baseUrl } from "/src/config/AxiosHelper";
 import toast from "react-hot-toast";
-
+import { getMessages } from "../services/RoomService";
+import { timeAgo } from "../config/helper";
 const ChatPage = () => {
 
     const [messages, setMessages] = useState([
@@ -38,6 +39,20 @@ const ChatPage = () => {
     const [input, setInput] = useState("");
     const chatBox = useRef(null);
     const [stompClient, setStompClient] = useState(null);
+
+    useEffect(() => {
+        async function loadMessages() {
+            try {
+                const messages = await getMessages(roomId);
+                setMessages(messages);
+            } catch (error) {
+
+            }
+        }
+        if (connected) {
+            loadMessages();
+        }
+    }, [])
 
     // connect + subscribe (single effect, with cleanup)
     useEffect(() => {
@@ -152,6 +167,7 @@ const ChatPage = () => {
                                 <div>
                                     <p className="font-bold">{message.sender}</p>
                                     <p>{message.content}</p>
+                                    <p className="test-sm text-gray-300">{timeAgo(message.timeStamp)}</p>
                                 </div>
                             </div>
                         </div>
