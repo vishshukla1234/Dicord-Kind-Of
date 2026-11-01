@@ -9,7 +9,18 @@ import './index.css';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <Toaster />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#18181b",
+            color: "#f4f4f5",
+            border: "1px solid #27272a",
+            fontSize: "13px",
+            borderRadius: "12px",
+          },
+        }}
+      />
       <ChatProvider>
         <AppRoutes />
       </ChatProvider>
