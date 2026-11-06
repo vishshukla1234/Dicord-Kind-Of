@@ -24,6 +24,8 @@ import {
     MdShield,
 } from "react-icons/md";
 
+import logo from "../assets/logo.png"
+
 const RANDOM_ROOM_PRESETS = [
     "dev-hangout",
     "design-sync",
@@ -237,10 +239,12 @@ const JoinCreateChat = () => {
                     </div>
 
                     <h1 className="text-xl font-semibold tracking-tight text-zinc-100">
-                        Realtime Chat
+                        <span className="flex transition-transform duration-300 hover:scale-110 hover:rotate-12">
+                            <img className="w-8 h-8" src={logo} alt="VOXO logo" srcset="" />VOXO
+                        </span>
                     </h1>
                     <p className="text-xs text-zinc-400 mt-0.5">
-                        {authUser ? `Welcome back, @${authUser.username}` : "Minimalist STOMP WebSocket Messaging"}
+                        {authUser ? `Welcome back, @${authUser.username}` : "Messaging App"}
                     </p>
                 </div>
 
@@ -252,22 +256,20 @@ const JoinCreateChat = () => {
                             <button
                                 type="button"
                                 onClick={() => setAuthMode("signin")}
-                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                                    authMode === "signin"
-                                        ? "bg-zinc-800 text-white shadow-sm"
-                                        : "text-zinc-400 hover:text-zinc-200"
-                                }`}
+                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${authMode === "signin"
+                                    ? "bg-zinc-800 text-white shadow-sm"
+                                    : "text-zinc-400 hover:text-zinc-200"
+                                    }`}
                             >
                                 <MdLogin className="text-sm" /> Sign In
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setAuthMode("signup")}
-                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                                    authMode === "signup"
-                                        ? "bg-zinc-800 text-white shadow-sm"
-                                        : "text-zinc-400 hover:text-zinc-200"
-                                }`}
+                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${authMode === "signup"
+                                    ? "bg-zinc-800 text-white shadow-sm"
+                                    : "text-zinc-400 hover:text-zinc-200"
+                                    }`}
                             >
                                 <MdPersonAdd className="text-sm" /> Create Account
                             </button>
@@ -432,22 +434,20 @@ const JoinCreateChat = () => {
                             <button
                                 type="button"
                                 onClick={() => setRoomMode("join")}
-                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                                    roomMode === "join"
-                                        ? "bg-zinc-800 text-white shadow-sm"
-                                        : "text-zinc-400 hover:text-zinc-200"
-                                }`}
+                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${roomMode === "join"
+                                    ? "bg-zinc-800 text-white shadow-sm"
+                                    : "text-zinc-400 hover:text-zinc-200"
+                                    }`}
                             >
                                 <MdArrowForward className="text-sm" /> Join Room
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setRoomMode("create")}
-                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                                    roomMode === "create"
-                                        ? "bg-zinc-800 text-white shadow-sm"
-                                        : "text-zinc-400 hover:text-zinc-200"
-                                }`}
+                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${roomMode === "create"
+                                    ? "bg-zinc-800 text-white shadow-sm"
+                                    : "text-zinc-400 hover:text-zinc-200"
+                                    }`}
                             >
                                 <MdAdd className="text-sm" /> Create Room
                             </button>
@@ -544,7 +544,7 @@ const JoinCreateChat = () => {
                 <div className="mt-6 pt-4 border-t border-zinc-800/60 text-center">
                     <p className="text-[11px] text-zinc-500 flex items-center justify-center gap-1.5">
                         <MdChatBubbleOutline className="text-zinc-400" />
-                        Admin-controlled channels & WebSocket encryption
+                        © 2026 VOXO. All rights reserved.
                     </p>
                 </div>
             </div>
