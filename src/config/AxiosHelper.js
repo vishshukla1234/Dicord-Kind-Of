@@ -1,4 +1,7 @@
-export const baseUrl = "http://localhost:8080";
+export const baseUrl =
+    typeof window !== "undefined" && window.location.origin.includes("antideploy.app")
+        ? window.location.origin
+        : (import.meta.env.VITE_API_URL || "http://localhost:8080");
 
 class HttpClient {
     constructor(base) {
