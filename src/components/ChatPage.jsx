@@ -405,6 +405,111 @@ const ChatPage = () => {
         setInput((prev) => prev + emoji);
     };
 
+    // Custom toast confirmation instead of window.confirm()
+    const confirmLeave = () => {
+        toast(
+            (t) => (
+                <div className="flex flex-col gap-2.5">
+                    <div className="flex items-start gap-2">
+                        <span className="text-rose-400 text-lg leading-none mt-0.5">🚪</span>
+                        <div>
+                            <p className="font-semibold text-zinc-100 text-sm">Leave Room?</p>
+                            <p className="text-zinc-400 text-xs mt-0.5">
+                                You'll exit <span className="text-zinc-200 font-medium">#{roomId}</span> and return to the lobby.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                        <button
+                            onClick={() => toast.dismiss(t.id)}
+                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer transition-colors"
+                        >
+                            Stay
+                        </button>
+                        <button
+                            onClick={() => {
+                                toast.dismiss(t.id);
+                                leaveRoom();
+                            }}
+                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-600 hover:bg-rose-500 text-white cursor-pointer transition-colors"
+                        >
+                            Leave Room
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000,
+                position: "top-center",
+                style: {
+                    background: "#18181b",
+                    color: "#f4f4f5",
+                    border: "1px solid #3f3f46",
+                    borderRadius: "14px",
+                    padding: "14px",
+                    minWidth: "280px",
+                },
+            }
+        );
+    };
+
+    const confirmClearChat = () => {
+        if (!isRoomAdmin) {
+            toast.error("Permission denied: Only the room creator can delete chat history.");
+            return;
+        }
+        toast(
+            (t) => (
+                <div className="flex flex-col gap-2.5">
+                    <div className="flex items-start gap-2">
+                        <span className="text-amber-400 text-lg leading-none mt-0.5">⚠️</span>
+                        <div>
+                            <p className="font-semibold text-zinc-100 text-sm">Clear Chat History?</p>
+                            <p className="text-zinc-400 text-xs mt-0.5">
+                                This will permanently delete all messages in <span className="text-zinc-200 font-medium">#{roomId}</span> for everyone.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                        <button
+                            onClick={() => toast.dismiss(t.id)}
+                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={async () => {
+                                toast.dismiss(t.id);
+                                try {
+                                    await clearMessagesApi(roomId, currentUser);
+                                    setMessages([]);
+                                    toast.success("Room chat history deleted by admin");
+                                } catch (err) {
+                                    toast.error(err.response?.data || "Failed to clear chat history");
+                                }
+                            }}
+                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-600 hover:bg-amber-500 text-white cursor-pointer transition-colors"
+                        >
+                            Delete All
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000,
+                position: "top-center",
+                style: {
+                    background: "#18181b",
+                    color: "#f4f4f5",
+                    border: "1px solid #3f3f46",
+                    borderRadius: "14px",
+                    padding: "14px",
+                    minWidth: "280px",
+                },
+            }
+        );
+    };
+
     const filteredMessages = useMemo(() => {
         if (!searchQuery.trim()) return messages;
         const q = searchQuery.toLowerCase();
@@ -519,7 +624,7 @@ const ChatPage = () => {
                     {isRoomAdmin && (
                         <button
                             type="button"
-                            onClick={handleClearChat}
+                            onClick={confirmClearChat}
                             title="Admin: Delete all chat history"
                             className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1.5 rounded-lg border border-amber-500/20 transition-all cursor-pointer"
                         >
@@ -531,11 +636,7 @@ const ChatPage = () => {
                     {/* Leave room */}
                     <button
                         type="button"
-                        onClick={() => {
-                            if (window.confirm("Leave this chat room?")) {
-                                leaveRoom();
-                            }
-                        }}
+                        onClick={confirmLeave}
                         title="Leave Room"
                         className="flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/20 cursor-pointer transition-all ml-1"
                     >
