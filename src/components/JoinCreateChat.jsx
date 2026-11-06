@@ -117,7 +117,11 @@ const JoinCreateChat = () => {
             toast.success("Account created successfully!");
             loginUser({ username: res.username, email: res.email });
         } catch (err) {
-            toast.error(err.response?.data?.message || err.response?.data || "Signup failed");
+            const msg =
+                err.response?.data?.message ||
+                (typeof err.response?.data === "string" ? err.response.data : null) ||
+                "Signup failed. Please try again.";
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -140,7 +144,11 @@ const JoinCreateChat = () => {
             toast.success("Signed in successfully!");
             loginUser({ username: res.username, email: res.email });
         } catch (err) {
-            toast.error(err.response?.data?.message || err.response?.data || "Invalid credentials");
+            const msg =
+                err.response?.data?.message ||
+                (typeof err.response?.data === "string" ? err.response.data : null) ||
+                "Invalid credentials";
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
